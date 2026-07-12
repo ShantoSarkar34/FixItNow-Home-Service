@@ -55,7 +55,7 @@ export function CustomCursor() {
     <>
       {/* Outer ring */}
       <motion.div
-        className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full border-2 border-primary"
+        className="pointer-events-none fixed top-0 left-0 z-9999 rounded-full border-2 border-primary"
         style={{
           x: ringX,
           y: ringY,
@@ -63,17 +63,17 @@ export function CustomCursor() {
           translateY: "-50%",
         }}
         animate={{
-          width: isHovering ? 56 : 32,
-          height: isHovering ? 56 : 32,
+          width: isHovering ? 36 : 32,
+          height: isHovering ? 36 : 32,
           opacity: isVisible ? 1 : 0,
           borderColor: isHovering ? "hsl(var(--secondary))" : "hsl(var(--primary))",
         }}
-        transition={{ duration: 0.25, ease: "easeOut" }}
+        transition={{ duration: 0.55, ease: "easeOut" }}
       />
 
       {/* Inner filled dot */}
       <motion.div
-        className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full bg-primary"
+        className="pointer-events-none fixed top-0 left-0 z-9999 rounded-full bg-primary"
         style={{
           x: dotX,
           y: dotY,
