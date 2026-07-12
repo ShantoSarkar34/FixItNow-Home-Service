@@ -7,6 +7,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Moon, Sun, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import logo_white from "../../app/images/logo_white.png"
+import logo_dark from "../../app/images/logo_dark.png"
 
 const NAV_LINKS = [
   { href: "/services", label: "Services" },
@@ -42,7 +45,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" data-cursor-hover className="group flex items-center gap-2.5">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-brand transition-transform duration-300 group-hover:rotate-12">
-            <Wrench className="h-4 w-4" strokeWidth={2.25} />
+            <Image src={logo_white} alt="Logo" className=" rounded-lg"/>
           </span>
           <span className="font-heading text-lg font-extrabold tracking-tight text-foreground">
             FixIt<span className="text-primary">Now</span>
