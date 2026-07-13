@@ -8,8 +8,7 @@ import { Menu, X, Moon, Sun, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import logo_white from "../../app/images/logo_white.png"
-import logo_dark from "../../app/images/logo_dark.png"
+import logo_white from "../../../public/images/logo_white.png"
 
 const NAV_LINKS = [
   { href: "/services", label: "Services" },
