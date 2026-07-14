@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search, MapPin, SlidersHorizontal, X } from "lucide-react";
-import { useCategories } from "@/hook/categories";
+import { useCategories } from "@/hooks/categories";
 
 export function ServiceFilters() {
   const router = useRouter();
