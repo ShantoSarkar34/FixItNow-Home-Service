@@ -7,7 +7,7 @@ import { BookServiceButton } from "@/components/booking/book-service-button";
 import type { Service } from "@/types";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://fixitnow-server.onrender.com";
+  process.env.NEXT_PUBLIC_API_URL ?? "https://fixit-server.vercel.app";
 
 async function getService(id: string): Promise<Service | null> {
   const res = await fetch(`${API_BASE_URL}/api/services/${id}`, {

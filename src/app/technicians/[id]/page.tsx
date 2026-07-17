@@ -5,7 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import type { TechnicianProfile, Review } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://fixitnow-server.onrender.com";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://fixit-server.vercel.app";
 
 async function getTechnician(id: string): Promise<TechnicianProfile | null> {
   const res = await fetch(`${API_BASE_URL}/api/technicians/${id}`, { cache: "no-store" });
