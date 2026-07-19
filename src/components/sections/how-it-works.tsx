@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { Search, CalendarCheck, CreditCard, Star } from "lucide-react";
 import { fadeUp } from "@/lib/motion";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 const STEPS = [
   {
@@ -32,8 +34,34 @@ const STEPS = [
 ];
 
 export function HowItWorks() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (!lineRef.current) return;
+      gsap.fromTo(
+        lineRef.current,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          transformOrigin: "left center",
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 65%",
+            end: "bottom 55%",
+            scrub: 1,
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="how-it-works" className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
+    <section id="how-it-works" ref={sectionRef} className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
       <motion.div
         variants={fadeUp}
         initial="hidden"
@@ -50,8 +78,8 @@ export function HowItWorks() {
       </motion.div>
 
       <div className="relative mt-16 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Connecting line — desktop only */}
         <div className="absolute top-8 left-0 hidden h-px w-full bg-border lg:block" />
+        <div ref={lineRef} className="absolute top-8 left-0 hidden h-px w-full scale-x-0 bg-primary lg:block" />
 
         {STEPS.map((step, i) => (
           <motion.div
@@ -69,12 +97,8 @@ export function HowItWorks() {
                 {step.n}
               </span>
             </div>
-            <h3 className="mt-5 font-heading text-lg font-bold text-foreground">
-              {step.title}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              {step.desc}
-            </p>
+            <h3 className="mt-5 font-heading text-lg font-bold text-foreground">{step.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
           </motion.div>
         ))}
       </div>

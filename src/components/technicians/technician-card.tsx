@@ -13,6 +13,7 @@ export function TechnicianCard({ technician }: { technician: TechnicianProfile }
     <Link
       href={`/technicians/${technician.id}`}
       data-cursor-hover
+      data-cursor-text="View"
       className="group flex flex-col rounded-3xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-brand"
     >
       <div className="flex items-center gap-3">

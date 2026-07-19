@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { ArrowRight, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fadeUp } from "@/lib/motion";
+import { Magnetic } from "@/components/ui/magnetic";
 
 export function CtaBanner() {
   return (
@@ -34,24 +35,29 @@ export function CtaBanner() {
         </p>
 
         <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href="/services">
-            <Button
-              size="lg"
-              className="bg-white text-primary shadow-none hover:bg-white/90"
-            >
-              Book a service
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white/40 text-white hover:bg-white/10"
-            >
-              Become a technician
-            </Button>
-          </Link>
+          <Magnetic>
+            <Link href="/services">
+              <Button
+                size="lg"
+                className="bg-white text-primary shadow-none hover:bg-white/90"
+                data-cursor-text="Book"
+              >
+                Book a service
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </Magnetic>
+          <Magnetic>
+            <Link href="/register">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white/40 text-white hover:bg-white/10"
+              >
+                Become a technician
+              </Button>
+            </Link>
+          </Magnetic>
         </div>
       </motion.div>
     </section>
