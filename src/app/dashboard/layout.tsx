@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { DashboardMobileNav } from "@/components/dashboard/mobile-nav";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: user, isLoading, isError } = useSession();
@@ -27,9 +28,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex min-h-screen bg-muted/20">
+    <div className="flex min-h-screen flex-col bg-muted/20 lg:flex-row">
       <DashboardSidebar role={user.role} name={user.name} />
-      <main className="flex-1 px-6 py-8 lg:px-10">{children}</main>
+      <DashboardMobileNav role={user.role} name={user.name} />
+      <main className="flex-1 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">{children}</main>
     </div>
   );
 }

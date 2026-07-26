@@ -10,7 +10,11 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SlotPicker } from "@/components/booking/slot-picker";
-import { bookingSchema, type BookingFormValues } from "@/lib/schemas/booking";
+import {
+  bookingDetailsSchema,
+  type BookingDetailsFormValues,
+  type BookingFormValues,
+} from "@/lib/schemas/booking";
 import { api, ApiError } from "@/lib/api";
 import type { Booking, Service, TechnicianProfile } from "@/types";
 
@@ -28,11 +32,9 @@ export function BookingModal({ open, onClose, service }: BookingModalProps) {
   const [createdBooking, setCreatedBooking] = useState<Booking | null>(null);
   const queryClient = useQueryClient();
 
-  // Assumes GET /api/technicians/:id returns an `availability` array.
   const { data: technician, isLoading } = useQuery({
     queryKey: ["technician", service.technicianId],
-    queryFn: () =>
-      api.get<TechnicianProfile>(`/api/technicians/${service.technicianId}`),
+    queryFn: () => api.get<TechnicianProfile>(`/api/technicians/${service.technicianId}`),
     enabled: open,
   });
 
@@ -41,8 +43,10 @@ export function BookingModal({ open, onClose, service }: BookingModalProps) {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<BookingFormValues>({ resolver: zodResolver(bookingSchema) });
+  } = useForm<BookingDetailsFormValues>({ resolver: zodResolver(bookingDetailsSchema) });
 
+  // mutationFn is explicitly typed as BookingFormValues (details + availabilityId) —
+  // this is what was mismatched before.
   const createBooking = useMutation({
     mutationFn: (values: BookingFormValues) =>
       api.post<Booking>("/api/bookings", { serviceId: service.id, ...values }),
@@ -52,11 +56,7 @@ export function BookingModal({ open, onClose, service }: BookingModalProps) {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     },
     onError: (err) => {
-      toast.error(
-        err instanceof ApiError
-          ? err.message
-          : "Couldn't create booking. Try again.",
-      );
+      toast.error(err instanceof ApiError ? err.message : "Couldn't create booking. Try again.");
     },
   });
 
@@ -70,28 +70,17 @@ export function BookingModal({ open, onClose, service }: BookingModalProps) {
     }, 200);
   };
 
-  const onSubmit = (values: BookingFormValues) => {
+  const onSubmit = (values: BookingDetailsFormValues) => {
     if (!selectedSlotId) return;
     createBooking.mutate({ ...values, availabilityId: selectedSlotId });
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      title={step !== "success" ? "Book this service" : undefined}
-    >
+    <Dialog open={open} onClose={handleClose} title={step !== "success" ? "Book this service" : undefined}>
       <AnimatePresence mode="wait">
         {step === "slot" && (
-          <motion.div
-            key="slot"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <p className="mb-1 text-sm font-medium text-foreground">
-              {service.title}
-            </p>
+          <motion.div key="slot" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <p className="mb-1 text-sm font-medium text-foreground">{service.title}</p>
             <p className="mb-4 text-xs text-muted-foreground">
               ৳{parseFloat(service.price).toFixed(0)} · {service.duration} min
             </p>
@@ -128,19 +117,13 @@ export function BookingModal({ open, onClose, service }: BookingModalProps) {
             className="space-y-4"
           >
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-foreground">
-                Service address
-              </label>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">Service address</label>
               <input
                 {...register("address")}
                 placeholder="House 12, Road 4, Bogra"
                 className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
-              {errors.address && (
-                <p className="mt-1 text-xs text-destructive">
-                  {errors.address.message}
-                </p>
-              )}
+              {errors.address && <p className="mt-1 text-xs text-destructive">{errors.address.message}</p>}
             </div>
 
             <div>
@@ -153,27 +136,14 @@ export function BookingModal({ open, onClose, service }: BookingModalProps) {
                 placeholder="Anything they should know beforehand?"
                 className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
-              {errors.note && (
-                <p className="mt-1 text-xs text-destructive">
-                  {errors.note.message}
-                </p>
-              )}
+              {errors.note && <p className="mt-1 text-xs text-destructive">{errors.note.message}</p>}
             </div>
 
             <div className="flex gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
-                onClick={() => setStep("slot")}
-              >
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setStep("slot")}>
                 Back
               </Button>
-              <Button
-                type="submit"
-                className="flex-1"
-                disabled={createBooking.isPending}
-              >
+              <Button type="submit" className="flex-1" disabled={createBooking.isPending}>
                 {createBooking.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -194,13 +164,10 @@ export function BookingModal({ open, onClose, service }: BookingModalProps) {
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-success/10">
               <CheckCircle2 className="h-7 w-7 text-success" />
             </div>
-            <h3 className="mt-4 font-heading text-lg font-bold text-foreground">
-              Booking requested
-            </h3>
+            <h3 className="mt-4 font-heading text-lg font-bold text-foreground">Booking requested</h3>
             <p className="mt-1.5 max-w-xs text-sm text-muted-foreground">
-              {technician?.user?.name ?? "The technician"} has been notified.
-              You'll be able to pay once they accept — check your bookings for
-              updates.
+              {technician?.user?.name ?? "The technician"} has been notified. You'll be able to pay once
+              they accept — check your bookings for updates.
             </p>
             <Button className="mt-6 w-full" onClick={handleClose}>
               Done

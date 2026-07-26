@@ -6,9 +6,9 @@ import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Moon, Sun, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/components/layout/user-menu";
+import { useSession } from "@/hooks/use-session";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import logo_white from "../../../public/images/logo_white.png"
 
 const NAV_LINKS = [
   { href: "/services", label: "Services" },
@@ -21,6 +21,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { data: user, isLoading } = useSession();
 
   useEffect(() => setMounted(true), []);
 
@@ -30,6 +31,14 @@ export function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const dashboardHref = user
+    ? user.role === "CUSTOMER"
+      ? "/dashboard/customer"
+      : user.role === "TECHNICIAN"
+        ? "/dashboard/technician"
+        : "/dashboard/admin"
+    : "/dashboard";
 
   return (
     <header
@@ -44,7 +53,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" data-cursor-hover className="group flex items-center gap-2.5">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-brand transition-transform duration-300 group-hover:rotate-12">
-            <Image src={logo_white} alt="Logo" className=" rounded-lg"/>
+            <Wrench className="h-4 w-4" strokeWidth={2.25} />
           </span>
           <span className="font-heading text-lg font-extrabold tracking-tight text-foreground">
             FixIt<span className="text-primary">Now</span>
@@ -81,16 +90,23 @@ export function Navbar() {
               <Moon className="h-4 w-4" />
             )}
           </button>
-          <Link
-            href="/login"
-            data-cursor-hover
-            className="px-3 text-sm font-medium text-foreground transition-colors hover:text-primary"
-          >
-            Log in
-          </Link>
-          <Link href="/register">
-            <Button size="sm">Get started</Button>
-          </Link>
+
+          {!isLoading && user && <UserMenu user={user} />}
+
+          {!isLoading && !user && (
+            <>
+              <Link
+                href="/login"
+                data-cursor-hover
+                className="px-3 text-sm font-medium text-foreground transition-colors hover:text-primary"
+              >
+                Log in
+              </Link>
+              <Link href="/register">
+                <Button size="sm">Get started</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -125,20 +141,42 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <div className="mt-3 flex items-center gap-3 border-t border-border pt-4">
+
+              {!isLoading && user ? (
                 <Link
-                  href="/login"
+                  href={dashboardHref}
                   onClick={() => setMobileOpen(false)}
-                  className="flex-1 py-2 text-center text-sm font-medium text-foreground"
+                  className="mt-3 flex items-center gap-3 rounded-xl border border-border px-3 py-2.5"
                 >
-                  Log in
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-(image:--gradient-brand) text-[11px] font-bold text-white">
+                    {user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{user.name}</p>
+                    <p className="text-xs text-muted-foreground">Go to dashboard</p>
+                  </div>
                 </Link>
-                <Link href="/register" onClick={() => setMobileOpen(false)} className="flex-1">
-                  <Button size="sm" className="w-full">
-                    Get started
-                  </Button>
-                </Link>
-              </div>
+              ) : (
+                <div className="mt-3 flex items-center gap-3 border-t border-border pt-4">
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 py-2 text-center text-sm font-medium text-foreground"
+                  >
+                    Log in
+                  </Link>
+                  <Link href="/register" onClick={() => setMobileOpen(false)} className="flex-1">
+                    <Button size="sm" className="w-full">
+                      Get started
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
