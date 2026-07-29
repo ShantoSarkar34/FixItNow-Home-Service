@@ -105,9 +105,9 @@
   --destructive-foreground: 0 0% 98%;
 }
 
-body {
+/* body {
   cursor: none;
-}
+} */
 
 @media (pointer: coarse) {
   body {

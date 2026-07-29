@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 
 export function CustomCursor() {
-  const [isHovering, setIsHovering] = useState(false);
+  const [isHovering, setIsHovering] = useState(true);
   const [cursorText, setCursorText] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
@@ -53,7 +53,7 @@ export function CustomCursor() {
 
   if (isTouch) return null;
 
-  const ringSize = cursorText ? 44 : isHovering ? 40 : 32;
+  const ringSize = cursorText ? 44 : isHovering ? 38 : 32;
 
   return (
     <>

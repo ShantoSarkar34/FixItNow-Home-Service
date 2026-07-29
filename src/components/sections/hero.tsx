@@ -176,7 +176,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden pt-40 pb-24">
+    <section ref={sectionRef} className="relative overflow-hidden pt-24 pb-24">
       <div
         ref={blobOneRef}
         className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl"
