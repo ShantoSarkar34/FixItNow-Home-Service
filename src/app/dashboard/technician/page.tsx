@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Briefcase, Clock, Star, CheckCircle2, ArrowRight } from "lucide-react";
+import {
+  Briefcase,
+  Clock,
+  Star,
+  CheckCircle2,
+  ArrowRight,
+  DollarSign,
+  CalendarClock,
+} from "lucide-react";
 import { useTechnicianServices } from "@/hooks/use-technician-services";
 import { useTechnicianProfile } from "@/hooks/use-technician-profile";
 import { useBookings } from "@/hooks/use-bookings";
@@ -25,6 +33,27 @@ export default function TechnicianOverviewPage() {
       );
     }).length ?? 0;
 
+  // Derived metric — no `earnings` field exists on the backend. Assumes the
+  // technician receives the full listed price on paid, completed bookings.
+  const totalEarnings =
+    allBookings
+      ?.filter(
+        (b) => b.status === "COMPLETED" && b.payment?.status === "COMPLETED",
+      )
+      .reduce(
+        (sum, b) => sum + (b.service ? parseFloat(b.service.price) : 0),
+        0,
+      ) ?? 0;
+
+  const upcomingJobs =
+    allBookings
+      ?.filter((b) => b.status === "ACCEPTED" || b.status === "IN_PROGRESS")
+      .sort(
+        (a, b) =>
+          new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime(),
+      )
+      .slice(0, 4) ?? [];
+
   return (
     <div>
       <h1 className="font-heading text-2xl font-extrabold tracking-tight text-foreground">
@@ -34,7 +63,7 @@ export default function TechnicianOverviewPage() {
         Here's your business at a glance.
       </p>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card p-5">
           <Briefcase className="h-5 w-5 text-primary" />
           <p className="mt-3 font-heading text-2xl font-extrabold text-foreground">
@@ -63,47 +92,97 @@ export default function TechnicianOverviewPage() {
           </p>
           <p className="text-xs text-muted-foreground">Completed this month</p>
         </div>
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <DollarSign className="h-5 w-5 text-success" />
+          <p className="mt-3 font-heading text-2xl font-extrabold text-foreground">
+            ৳{totalEarnings.toFixed(0)}
+          </p>
+          <p className="text-xs text-muted-foreground">Total earnings</p>
+        </div>
       </div>
 
-      <div className="mt-8 rounded-2xl border border-border bg-card p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <p className="font-heading text-sm font-bold text-foreground">
-            Incoming requests
-          </p>
-          <Link
-            href="/dashboard/technician/bookings"
-            data-cursor-hover
-            className="flex items-center gap-1 text-xs font-semibold text-primary"
-          >
-            View all <ArrowRight className="h-3 w-3" />
-          </Link>
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="mb-4 flex items-center justify-between">
+            <p className="font-heading text-sm font-bold text-foreground">
+              Incoming requests
+            </p>
+            <Link
+              href="/dashboard/technician/bookings"
+              data-cursor-hover
+              className="flex items-center gap-1 text-xs font-semibold text-primary"
+            >
+              View all <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          {isLoading && (
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          )}
+          {!isLoading && pendingBookings?.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              No pending requests right now.
+            </p>
+          )}
+          <div className="space-y-3">
+            {pendingBookings?.slice(0, 5).map((b) => (
+              <Link
+                key={b.id}
+                href={`/dashboard/technician/bookings/${b.id}`}
+                data-cursor-hover
+                className="flex items-center justify-between rounded-xl border border-border p-3 transition-colors hover:bg-muted/50"
+              >
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {b.service?.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {b.customer?.name}
+                  </p>
+                </div>
+                <BookingStatusBadge status={b.status} />
+              </Link>
+            ))}
+          </div>
         </div>
 
-        {isLoading && <p className="text-sm text-muted-foreground">Loading…</p>}
-        {!isLoading && pendingBookings?.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            No pending requests right now.
-          </p>
-        )}
-        <div className="space-y-3">
-          {pendingBookings?.slice(0, 5).map((b) => (
-            <Link
-              key={b.id}
-              href={`/dashboard/technician/bookings/${b.id}`}
-              data-cursor-hover
-              className="flex items-center justify-between rounded-xl border border-border p-3 transition-colors hover:bg-muted/50"
-            >
-              <div>
-                <p className="text-sm font-medium text-foreground">
-                  {b.service?.title}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {b.customer?.name}
-                </p>
-              </div>
-              <BookingStatusBadge status={b.status} />
-            </Link>
-          ))}
+        <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="mb-4 flex items-center gap-2">
+            <CalendarClock className="h-4 w-4 text-primary" />
+            <p className="font-heading text-sm font-bold text-foreground">
+              Upcoming jobs
+            </p>
+          </div>
+
+          {upcomingJobs.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              No upcoming jobs scheduled.
+            </p>
+          )}
+          <div className="space-y-3">
+            {upcomingJobs.map((b) => (
+              <Link
+                key={b.id}
+                href={`/dashboard/technician/bookings/${b.id}`}
+                data-cursor-hover
+                className="flex items-center justify-between rounded-xl border border-border p-3 transition-colors hover:bg-muted/50"
+              >
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {b.service?.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(b.bookingDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                    {b.availability && ` · ${b.availability.startTime}`}
+                  </p>
+                </div>
+                <BookingStatusBadge status={b.status} />
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>

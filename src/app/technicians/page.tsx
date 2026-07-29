@@ -14,25 +14,46 @@ import type { TechnicianProfile } from "@/types";
 
 function TechniciansContent() {
   const searchParams = useSearchParams();
+  const minRating = searchParams.get("minRating");
   const queryString = searchParams.toString();
+  const apiParams = new URLSearchParams(searchParams.toString());
+  apiParams.delete("minRating");
 
-  const { data: technicians, isLoading, isError } = useQuery({
+
+  const {
+    data: technicians,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["technicians", queryString],
     queryFn: () =>
-      api.get<TechnicianProfile[]>(`/api/technicians${queryString ? `?${queryString}` : ""}`),
+      api.get<TechnicianProfile[]>(
+        `/api/technicians${queryString ? `?${queryString}` : ""}`,
+      ),
   });
+
+  const filteredTechnicians = minRating
+    ? technicians?.filter((t) => t.averageRating >= parseFloat(minRating))
+    : technicians;
+      // ...rest of the component unchanged, but render `filteredTechnicians`
+  // instead of `technicians` everywhere below (count text + grid map)
+
 
   return (
     <>
       <Navbar />
       <main className="mx-auto max-w-7xl px-6 pb-24 pt-32 lg:px-8">
         <div className="mb-10">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Browse</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">
+            Browse
+          </span>
           <h1 className="mt-2 font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             Find a trusted technician
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            {isLoading ? "Loading technicians…" : `${technicians?.length ?? 0} technicians available`}
+            {isLoading
+              ? "Loading technicians…"
+              : `${technicians?.length ?? 0} technicians available`}
           </p>
         </div>
 
@@ -68,13 +89,16 @@ function TechniciansContent() {
               </div>
             )}
 
-            {!isLoading && !isError && technicians && technicians.length > 0 && (
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                {technicians.map((tech) => (
-                  <TechnicianCard key={tech.id} technician={tech} />
-                ))}
-              </div>
-            )}
+            {!isLoading &&
+              !isError &&
+              technicians &&
+              technicians.length > 0 && (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                  {technicians.map((tech) => (
+                    <TechnicianCard key={tech.id} technician={tech} />
+                  ))}
+                </div>
+              )}
           </div>
         </div>
       </main>

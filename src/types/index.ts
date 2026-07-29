@@ -95,3 +95,13 @@ export interface Review {
   rating: number;
   comment?: string | null;
 }
+
+export interface Payment {
+  id: number;
+  amount: string;
+  status: PaymentStatus;
+  provider: "STRIPE";
+  bookingId?: number;
+  booking?: Booking;
+  createdAt?: string;
+}

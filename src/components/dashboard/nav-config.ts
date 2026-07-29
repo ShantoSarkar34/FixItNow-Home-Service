@@ -9,6 +9,7 @@ import {
   FolderKanban,
   ListChecks,
   WrenchIcon,
+  CreditCard,
 } from "lucide-react";
 import type { UserRole } from "@/types";
 
@@ -23,6 +24,7 @@ type NavByRole = Record<UserRole, NavLink[]>;
 const customerLinks: NavLink[] = [
   { href: "/dashboard/customer", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/customer/bookings", label: "My bookings", icon: CalendarCheck },
+  { href: "/dashboard/customer/payments", label: "Payments", icon: CreditCard },
   { href: "/dashboard/customer/profile", label: "Profile", icon: UserCircle },
   { href: "/services", label: "Browse Services", icon: WrenchIcon },
   { href: "/technicians", label: "Browse Technicians", icon: Users },

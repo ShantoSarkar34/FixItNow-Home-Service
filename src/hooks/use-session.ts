@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
+import { setSessionHint, clearSessionHint } from "@/lib/session-hint";
 import type { User } from "@/types";
 
 export function useSession() {
@@ -17,8 +18,13 @@ export function useSession() {
   });
 
   useEffect(() => {
-    if (query.data) setUser(query.data);
-    else if (query.isError) clear();
+    if (query.data) {
+      setUser(query.data);
+      setSessionHint();
+    } else if (query.isError) {
+      clear();
+      clearSessionHint();
+    }
   }, [query.data, query.isError, setUser, clear]);
 
   return query;

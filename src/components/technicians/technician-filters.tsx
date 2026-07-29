@@ -5,7 +5,6 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search, MapPin, SlidersHorizontal, X } from "lucide-react";
 import { useCategories } from "@/hooks/categories";
 
-
 export function TechnicianFilters() {
   const router = useRouter();
   const pathname = usePathname();
@@ -14,14 +13,20 @@ export function TechnicianFilters() {
 
   const [search, setSearch] = useState(searchParams.get("search") ?? "");
   const [location, setLocation] = useState(searchParams.get("location") ?? "");
-  const [categoryId, setCategoryId] = useState(searchParams.get("categoryId") ?? "");
+  const [categoryId, setCategoryId] = useState(
+    searchParams.get("categoryId") ?? "",
+  );
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [minRating, setMinRating] = useState(
+    searchParams.get("minRating") ?? "",
+  );
 
   const applyFilters = () => {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
     if (location) params.set("location", location);
     if (categoryId) params.set("categoryId", categoryId);
+    if (minRating) params.set("minRating", minRating);
     router.push(`${pathname}?${params.toString()}`);
     setMobileOpen(false);
   };
@@ -30,16 +35,19 @@ export function TechnicianFilters() {
     setSearch("");
     setLocation("");
     setCategoryId("");
+    setMinRating("");
     router.push(pathname);
     setMobileOpen(false);
   };
 
-  const hasActiveFilters = !!(search || location || categoryId);
+  const hasActiveFilters = !!(search || location || categoryId || minRating);
 
   const Fields = (
     <div className="space-y-5">
       <div>
-        <label className="mb-1.5 block text-xs font-medium text-foreground">Search</label>
+        <label className="mb-1.5 block text-xs font-medium text-foreground">
+          Search
+        </label>
         <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
           <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
           <input
@@ -53,14 +61,16 @@ export function TechnicianFilters() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-xs font-medium text-foreground">Category</label>
+        <label className="mb-1.5 block text-xs font-medium text-foreground">
+          Category
+        </label>
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
           className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         >
           <option value="">All categories</option>
-          {categories?.map((c : any) => (
+          {categories?.map((c: any) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>
@@ -69,7 +79,9 @@ export function TechnicianFilters() {
       </div>
 
       <div>
-        <label className="mb-1.5 block text-xs font-medium text-foreground">Location</label>
+        <label className="mb-1.5 block text-xs font-medium text-foreground">
+          Location
+        </label>
         <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
           <MapPin className="h-4 w-4 shrink-0 text-muted-foreground" />
           <input
@@ -80,6 +92,25 @@ export function TechnicianFilters() {
             className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="mb-1.5 block text-xs font-medium text-foreground">
+          Minimum rating
+        </label>
+        <select
+          value={minRating}
+          onChange={(e) => setMinRating(e.target.value)}
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+        >
+          <option value="">Any rating</option>
+          <option value="3">3.0+</option>
+          <option value="4">4.0+</option>
+          <option value="4.5">4.5+</option>
+        </select>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Filtered locally — not sent to the server.
+        </p>
       </div>
 
       <div className="flex gap-2">
@@ -109,7 +140,9 @@ export function TechnicianFilters() {
         <div className="sticky top-24 rounded-2xl border border-border bg-card p-5 shadow-sm">
           <div className="mb-4 flex items-center gap-2">
             <SlidersHorizontal className="h-4 w-4 text-primary" />
-            <p className="font-heading text-sm font-bold text-foreground">Filters</p>
+            <p className="font-heading text-sm font-bold text-foreground">
+              Filters
+            </p>
           </div>
           {Fields}
         </div>
@@ -122,7 +155,9 @@ export function TechnicianFilters() {
       >
         <SlidersHorizontal className="h-4 w-4" />
         Filters
-        {hasActiveFilters && <span className="h-1.5 w-1.5 rounded-full bg-secondary" />}
+        {hasActiveFilters && (
+          <span className="h-1.5 w-1.5 rounded-full bg-secondary" />
+        )}
       </button>
 
       {mobileOpen && (
@@ -133,7 +168,9 @@ export function TechnicianFilters() {
           />
           <div className="absolute right-0 top-0 h-full w-full max-w-xs overflow-y-auto bg-card p-5 shadow-brand">
             <div className="mb-4 flex items-center justify-between">
-              <p className="font-heading text-sm font-bold text-foreground">Filters</p>
+              <p className="font-heading text-sm font-bold text-foreground">
+                Filters
+              </p>
               <button onClick={() => setMobileOpen(false)} data-cursor-hover>
                 <X className="h-5 w-5 text-muted-foreground" />
               </button>

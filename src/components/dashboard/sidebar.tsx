@@ -12,8 +12,15 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
 import { NAV_BY_ROLE } from "@/components/dashboard/nav-config";
 import type { UserRole } from "@/types";
+import { clearSessionHint } from "@/lib/session-hint";
 
-export function DashboardSidebar({ role, name }: { role?: UserRole; name?: string }) {
+export function DashboardSidebar({
+  role,
+  name,
+}: {
+  role?: UserRole;
+  name?: string;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const clear = useAuthStore((s) => s.clear);
@@ -31,6 +38,7 @@ export function DashboardSidebar({ role, name }: { role?: UserRole; name?: strin
       // clear local state regardless of server response
     }
     clear();
+    clearSessionHint();
     queryClient.clear();
     toast.success("Logged out");
     router.push("/login");
@@ -53,19 +61,27 @@ export function DashboardSidebar({ role, name }: { role?: UserRole; name?: strin
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
-          {mounted && resolvedTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {mounted && resolvedTheme === "dark" ? (
+            <Sun className="h-4 w-4" />
+          ) : (
+            <Moon className="h-4 w-4" />
+          )}
         </button>
       </div>
 
       {name && (
         <div className="mx-4 mb-4 rounded-xl bg-muted/50 px-3 py-2.5">
-          <p className="truncate text-sm font-semibold text-foreground">{name}</p>
-          <p className="text-xs capitalize text-muted-foreground">{role?.toLowerCase()}</p>
+          <p className="truncate text-sm font-semibold text-foreground">
+            {name}
+          </p>
+          <p className="text-xs capitalize text-muted-foreground">
+            {role?.toLowerCase()}
+          </p>
         </div>
       )}
 
       <nav className="flex-1 space-y-1 px-4">
-        {links.map((link : any) => {
+        {links.map((link: any) => {
           const active = pathname === link.href;
           return (
             <Link
@@ -76,7 +92,7 @@ export function DashboardSidebar({ role, name }: { role?: UserRole; name?: strin
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                 active
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
               )}
             >
               <link.icon className="h-4 w-4" />
