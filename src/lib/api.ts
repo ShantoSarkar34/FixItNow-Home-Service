@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://fixit-server.vercel.app";
+  process.env.NEXT_PUBLIC_API_URL ?? "https://fixitnow-server.onrender.com";
 
 interface ApiErrorSource {
   path: string;

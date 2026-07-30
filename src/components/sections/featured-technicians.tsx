@@ -12,63 +12,36 @@ import {
 } from "lucide-react";
 import { fadeUp } from "@/lib/motion";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import { TechnicianProfile } from "@/types";
+import { api } from "@/lib/api";
 
-// Placeholder — swap for GET /api/technicians once data-fetching layer is wired
-const TECHNICIANS = [
-  {
-    id: 1,
-    name: "Rafiq Karim",
-    category: "Electrician",
-    location: "Bogra",
-    rating: 4.9,
-    jobs: 214,
-    verified: true,
-    gradient: "linear-gradient(135deg,#0F6E63,#1C8F80)",
-  },
-  {
-    id: 2,
-    name: "Nusrat Jahan",
-    category: "Home Cleaning",
-    location: "Rajshahi",
-    rating: 4.8,
-    jobs: 187,
-    verified: true,
-    gradient: "linear-gradient(135deg,#F2934C,#E56B4F)",
-  },
-  {
-    id: 3,
-    name: "Imran Hossain",
-    category: "Plumber",
-    location: "Bogra",
-    rating: 4.7,
-    jobs: 156,
-    verified: true,
-    gradient: "linear-gradient(135deg,#0F6E63,#0B4F46)",
-  },
-  {
-    id: 4,
-    name: "Shirin Akter",
-    category: "Painter",
-    location: "Natore",
-    rating: 4.9,
-    jobs: 98,
-    verified: false,
-    gradient: "linear-gradient(135deg,#F2934C,#C9772E)",
-  },
-  {
-    id: 5,
-    name: "Tanvir Ahmed",
-    category: "Carpenter",
-    location: "Bogra",
-    rating: 4.6,
-    jobs: 132,
-    verified: true,
-    gradient: "linear-gradient(135deg,#1C8F80,#0F6E63)",
-  },
+const gradients = [
+  "linear-gradient(135deg,#0F6E63,#1C8F80)",
+  "linear-gradient(135deg,#F2934C,#E56B4F)",
+  "linear-gradient(135deg,#0F6E63,#0B4F46)",
+  "linear-gradient(135deg,#F2934C,#C9772E)",
+  "linear-gradient(135deg,#1C8F80,#0F6E63)",
 ];
 
 export function FeaturedTechnicians() {
   const scrollerRef = useRef<HTMLDivElement>(null);
+
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
+
+  const {
+    data: technicians,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["technicians", queryString],
+    queryFn: () =>
+      api.get<TechnicianProfile[]>(
+        `/api/technicians${queryString ? `?${queryString}` : ""}`,
+      ),
+  });
 
   const scroll = (dir: "left" | "right") => {
     scrollerRef.current?.scrollBy({
@@ -76,6 +49,14 @@ export function FeaturedTechnicians() {
       behavior: "smooth",
     });
   };
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (isError || !technicians?.length) {
+    return null;
+  }
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
@@ -88,13 +69,15 @@ export function FeaturedTechnicians() {
       >
         <div>
           <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-            Top rated
+            Top Rated
           </span>
+
           <h2 className="mt-3 font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             Meet a few of our pros
           </h2>
         </div>
-        <div className="hidden items-center gap-2 sm:flex">
+
+        <div className="flex items-center gap-2">
           <button
             aria-label="Scroll left"
             data-cursor-hover
@@ -103,6 +86,7 @@ export function FeaturedTechnicians() {
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
+
           <button
             aria-label="Scroll right"
             data-cursor-hover
@@ -116,9 +100,9 @@ export function FeaturedTechnicians() {
 
       <div
         ref={scrollerRef}
-        className="mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 scrollbar-none [&::-webkit-scrollbar]:hidden"
+        className="pt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 scrollbar-none [&::-webkit-scrollbar]:hidden"
       >
-        {TECHNICIANS.map((tech, i) => (
+        {technicians.map((tech, i) => (
           <motion.div
             key={tech.id}
             custom={i}
@@ -139,24 +123,33 @@ export function FeaturedTechnicians() {
               <div className="flex items-center gap-3">
                 <div
                   className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-sm font-bold text-white"
-                  style={{ backgroundImage: tech.gradient }}
+                  style={{
+                    backgroundImage: gradients[i % gradients.length],
+                  }}
                 >
-                  {tech.name
+                  {tech?.user?.name
                     .split(" ")
-                    .map((n) => n[0])
+                    .map((word) => word[0])
                     .join("")}
                 </div>
+
                 <div className="min-w-0">
                   <div className="flex items-center gap-1">
                     <p className="truncate font-heading text-sm font-bold text-foreground">
-                      {tech.name}
+                      {tech.user?.name}
                     </p>
-                    {tech.verified && (
+
+                    {tech.isVerified && (
                       <BadgeCheck className="h-3.5 w-3.5 shrink-0 fill-primary text-primary-foreground" />
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {tech.category}
+
+                  <p className="truncate text-xs text-muted-foreground">
+                    {tech.services?.length
+                      ? tech.services
+                          .map((service) => service.category?.name)
+                          .join(", ")
+                      : "General Service"}
                   </p>
                 </div>
               </div>
@@ -164,13 +157,16 @@ export function FeaturedTechnicians() {
               <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-xs">
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <MapPin className="h-3.5 w-3.5" />
-                  {tech.location}
+                  <span className="truncate">{tech.location}</span>
                 </div>
+
                 <div className="flex items-center gap-1 font-semibold text-foreground">
                   <Star className="h-3.5 w-3.5 fill-secondary text-secondary" />
-                  {tech.rating}
+
+                  {tech.averageRating.toFixed(1)}
+
                   <span className="font-normal text-muted-foreground">
-                    ({tech.jobs} jobs)
+                    • {tech.yearsExperience} yrs
                   </span>
                 </div>
               </div>

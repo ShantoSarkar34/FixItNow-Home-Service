@@ -9,7 +9,7 @@ import { TechnicianBookingActions } from "@/components/technicians/booking-actio
 import type { Booking } from "@/types";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://fixit-server.vercel.app";
+  process.env.NEXT_PUBLIC_API_URL ?? "https://fixitnow-server.onrender.com";
 
 async function getBooking(id: string): Promise<Booking | null> {
   const cookieHeader = (await headers()).get("cookie") ?? "";

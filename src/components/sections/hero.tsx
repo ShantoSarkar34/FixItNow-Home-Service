@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/ui/magnetic";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { Avatar } from "../ui/avatar";
 
 const CATEGORY_CHIPS = [
   "Plumbing",
@@ -170,10 +172,13 @@ function JourneyComposition() {
           scale: { duration: 0.5, delay: 0.3 },
           y: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 },
         }}
-        className="absolute -right-6 -top-6 flex items-center gap-2.5 rounded-2xl border border-border bg-card/80 px-3.5 py-3 shadow-md backdrop-blur-xl"
+        className="absolute -right-6 -top-10 flex items-center gap-2.5 rounded-2xl border border-border bg-card/80 px-3.5 py-3 shadow-md backdrop-blur-xl"
       >
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-(image:--gradient-brand) text-xs font-bold text-white">
-          RK
+        <div className="flex h-9 w-9 items-center justify-center rounded-full">
+          <Avatar
+            src={"https://i.ibb.co.com/0pFLGFYF/1.jpg"}
+            name="Avater"
+          ></Avatar>
         </div>
         <div>
           <div className="flex items-center gap-1">

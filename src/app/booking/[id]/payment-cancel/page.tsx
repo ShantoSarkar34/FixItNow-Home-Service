@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { PayNowButton } from "@/components/booking/pay-now-button";
 import type { Booking } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://fixit-server.vercel.app";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://fixitnow-server.onrender.com";
 
 async function getBooking(id: string): Promise<Booking | null> {
   const cookieHeader = (await headers()).get("cookie") ?? "";
