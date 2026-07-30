@@ -7,6 +7,7 @@ import { Hero } from "@/components/sections/hero";
 import { HowItWorks } from "@/components/sections/how-it-works";
 import { Testimonials } from "@/components/sections/testimonials";
 import { TrustBar } from "@/components/sections/trust-bar";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -17,7 +18,9 @@ export default function Home() {
         <TrustBar />
         <HowItWorks />
         <FeaturedCategories />
+        <Suspense fallback={null}>
         <FeaturedTechnicians />
+        </Suspense>
         <Testimonials />
         <CtaBanner />
       </main>

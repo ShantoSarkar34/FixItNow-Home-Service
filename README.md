@@ -16,7 +16,7 @@
 
 ---
 
-![FixItNow Hero Screenshot](./screenshots/hero.png)
+![FixItNow Hero Screenshot](/public/images/screenshorts/hero.png)
 
 ## 📖 Overview
 
@@ -52,26 +52,21 @@ The platform has three roles, each with a purpose-built dashboard:
 
 <div align="center">
 
-### Landing Page
-![Landing Page](./screenshots/landing.png)
-
 ### Browse Services
-![Browse Services](./screenshots/services.png)
+![Browse Services](/public/images/screenshorts/service.png)
 
 ### Booking Flow
-![Booking Flow](./screenshots/booking-flow.png)
+![Booking Flow](/public/images/screenshorts/how-to-work.png)
 
 ### Customer Dashboard
-![Customer Dashboard](./screenshots/customer-dashboard.png)
+![Customer Dashboard](/public/images/screenshorts/customer-profile.png)
 
 ### Technician Dashboard
-![Technician Dashboard](./screenshots/technician-dashboard.png)
+![Technician Dashboard](/public/images/screenshorts/technician-profile.png)
 
 ### Admin Analytics
-![Admin Dashboard](./screenshots/admin-dashboard.png)
+![Admin Dashboard](/public/images/screenshorts/admin-profile.png)
 
-### Dark Mode
-![Dark Mode](./screenshots/dark-mode.png)
 
 </div>
 
