@@ -5,7 +5,7 @@ import { useSession } from "@/hooks/use-session";
 import { ProfileHeader } from "@/components/profile/profile-header";
 import { AccountProfileForm } from "@/components/profile/account-profile-form";
 
-export default function CustomerProfilePage() {
+export default function AdminProfilePage() {
   const { data: user, isLoading } = useSession();
 
   if (isLoading || !user) {
@@ -13,7 +13,7 @@ export default function CustomerProfilePage() {
   }
 
   return (
-    <div className="max-w-full ">
+    <div className="max-w-full">
       <ProfileHeader name={user.name} role={user.role} photo={user.photo} />
       <AccountProfileForm user={user} />
     </div>

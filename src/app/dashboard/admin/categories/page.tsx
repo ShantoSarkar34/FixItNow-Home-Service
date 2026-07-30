@@ -63,7 +63,7 @@ export default function AdminCategoriesPage() {
 
   const updateCategory = useMutation({
     mutationFn: (values: CategoryFormValues) =>
-      api.put(`/api/categories/${editingCategory!.id}`, values),
+      api.put(`/api/admin/categories/${editingCategory!.id}`, values),
     onSuccess: () => {
       toast.success("Category updated");
       invalidateCategories();

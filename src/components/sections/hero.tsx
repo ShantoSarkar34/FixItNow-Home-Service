@@ -20,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/ui/magnetic";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { Avatar } from "../ui/avatar";
 
 const CATEGORY_CHIPS = [

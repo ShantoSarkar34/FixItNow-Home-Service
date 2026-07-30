@@ -10,6 +10,7 @@ import { LayoutDashboard, LogOut, ChevronDown } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth-store";
 import type { User } from "@/types";
+import { Avatar } from "../ui/avatar";
 
 export function UserMenu({ user }: { user: User }) {
   const [open, setOpen] = useState(false);
@@ -27,7 +28,8 @@ export function UserMenu({ user }: { user: User }) {
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     };
     document.addEventListener("mousedown", onClickOutside);
     return () => document.removeEventListener("mousedown", onClickOutside);
@@ -58,16 +60,23 @@ export function UserMenu({ user }: { user: User }) {
       <button
         onClick={() => setOpen((v) => !v)}
         data-cursor-hover
-        className="flex items-center gap-2 rounded-full border border-border bg-card py-1 pl-1 pr-3 transition-colors hover:bg-muted"
+        className="flex items-center gap-2 rounded-full border border-primary/30 bg-card py-1 pl-1 pr-2 transition-colors hover:bg-muted cursor-pointer"
       >
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-(image:--gradient-brand) text-[11px] font-bold text-white">
-          {initials}
-        </span>
+        <div>
+          {user.photo ? (
+            <Avatar src={user.photo} name="Avater" size={28} />
+          ) : (
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-(image:--gradient-brand) text-[11px] font-bold text-white">
+              {initials}
+            </span>
+          )}
+        </div>
+
         <span className="max-w-25 truncate text-sm font-medium text-foreground">
           {user.name.split(" ")[0]}
         </span>
         <ChevronDown
-          className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-3.5 w-3.5 text-primary transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
 
@@ -81,8 +90,12 @@ export function UserMenu({ user }: { user: User }) {
             className="absolute right-0 top-full mt-2 w-48 overflow-hidden rounded-2xl border border-border bg-card shadow-brand"
           >
             <div className="border-b border-border px-4 py-3">
-              <p className="truncate text-sm font-semibold text-foreground">{user.name}</p>
-              <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+              <p className="truncate text-sm font-semibold text-foreground">
+                {user.name}
+              </p>
+              <p className="truncate text-xs opacity-80 text-primary">
+                {user.email}
+              </p>
             </div>
             <Link
               href={dashboardHref}

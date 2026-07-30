@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { UserMenu } from "@/components/layout/user-menu";
 import { useSession } from "@/hooks/use-session";
 import { cn } from "@/lib/utils";
+import { Avatar } from "../ui/avatar";
 
 const NAV_LINKS = [
   { href: "/services", label: "Services" },
@@ -40,18 +41,24 @@ export function Navbar() {
         : "/dashboard/admin"
     : "/dashboard";
 
+  console.log(user);
+
   return (
     <header
       className={cn(
         "fixed top-0 z-50 w-full transition-all duration-300",
         scrolled
           ? "border-b border-border bg-background/80 backdrop-blur-lg shadow-sm"
-          : "border-b border-transparent bg-transparent"
+          : "border-b border-transparent bg-transparent",
       )}
     >
       <nav className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" data-cursor-hover className="group flex items-center gap-2.5">
+        <Link
+          href="/"
+          data-cursor-hover
+          className="group flex items-center gap-2.5"
+        >
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-brand transition-transform duration-300 group-hover:rotate-12">
             <Wrench className="h-4 w-4" strokeWidth={2.25} />
           </span>
@@ -81,7 +88,9 @@ export function Navbar() {
           <button
             aria-label="Toggle theme"
             data-cursor-hover
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            onClick={() =>
+              setTheme(resolvedTheme === "dark" ? "light" : "dark")
+            }
             className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             {mounted && resolvedTheme === "dark" ? (
@@ -116,7 +125,11 @@ export function Navbar() {
           onClick={() => setMobileOpen((v) => !v)}
           className="flex h-9 w-9 items-center justify-center rounded-full text-foreground md:hidden"
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
       </nav>
 
@@ -148,17 +161,27 @@ export function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className="mt-3 flex items-center gap-3 rounded-xl border border-border px-3 py-2.5"
                 >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-(image:--gradient-brand) text-[11px] font-bold text-white">
-                    {user.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .slice(0, 2)
-                      .toUpperCase()}
-                  </span>
                   <div>
-                    <p className="text-sm font-medium text-foreground">{user.name}</p>
-                    <p className="text-xs text-muted-foreground">Go to dashboard</p>
+                    {user.photo ? (
+                      <Avatar src={user.photo} name="Avater" />
+                    ) : (
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-(image:--gradient-brand) text-[11px] font-bold text-white">
+                        {user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Go to dashboard
+                    </p>
                   </div>
                 </Link>
               ) : (
@@ -170,7 +193,11 @@ export function Navbar() {
                   >
                     Log in
                   </Link>
-                  <Link href="/register" onClick={() => setMobileOpen(false)} className="flex-1">
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1"
+                  >
                     <Button size="sm" className="w-full">
                       Get started
                     </Button>

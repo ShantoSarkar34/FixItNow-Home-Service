@@ -23,9 +23,9 @@ type NavByRole = Record<UserRole, NavLink[]>;
 
 const customerLinks: NavLink[] = [
   { href: "/dashboard/customer", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/customer/profile", label: "Profile", icon: UserCircle },
   { href: "/dashboard/customer/bookings", label: "My bookings", icon: CalendarCheck },
   { href: "/dashboard/customer/payments", label: "Payments", icon: CreditCard },
-  { href: "/dashboard/customer/profile", label: "Profile", icon: UserCircle },
   { href: "/services", label: "Browse Services", icon: WrenchIcon },
   { href: "/technicians", label: "Browse Technicians", icon: Users },
 ];
@@ -40,6 +40,7 @@ const technicianLinks: NavLink[] = [
 
 const adminLinks: NavLink[] = [
   { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/admin/profile", label: "Profile", icon: UserCircle },
   { href: "/dashboard/admin/users", label: "Users", icon: Users },
   { href: "/dashboard/admin/categories", label: "Categories", icon: FolderKanban },
   { href: "/dashboard/admin/bookings", label: "All bookings", icon: ListChecks },
