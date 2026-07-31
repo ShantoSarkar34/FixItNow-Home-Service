@@ -44,7 +44,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             <SmoothScrollProvider>
-              <CustomCursor />
+              {/* <CustomCursor /> */}
               {children}
               <Toaster richColors position="top-center" />
             </SmoothScrollProvider>
