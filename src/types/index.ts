@@ -78,7 +78,7 @@ export interface Booking {
   service?: Service;
   availability?: Availability;
   customer?: User;
-  technician?: TechnicianProfile;
+  technician?: User;
   payment?: Payment | null;
   review?: Review | null;
 }

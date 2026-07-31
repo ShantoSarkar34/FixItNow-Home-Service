@@ -84,7 +84,7 @@ export default function CustomerOverviewPage() {
                   {b.service?.title}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {b.technician?.user?.name}
+                  {b.technician?.name}
                 </p>
               </div>
               <BookingStatusBadge status={b.status} />

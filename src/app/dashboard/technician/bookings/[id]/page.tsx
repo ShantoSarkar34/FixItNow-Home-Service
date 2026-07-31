@@ -1,38 +1,78 @@
-import { headers } from "next/headers";
-import { notFound } from "next/navigation";
-import { MapPin, Calendar, Clock, FileText, User } from "lucide-react";
+"use client";
+
+import { use } from "react";
+import Link from "next/link";
+import {
+  Loader2,
+  MapPin,
+  Calendar,
+  Clock,
+  FileText,
+  AlertTriangle,
+  FileSearch,
+  User,
+} from "lucide-react";
+import { useBooking } from "@/hooks/use-booking";
 import {
   BookingStatusBadge,
   PaymentStatusBadge,
 } from "@/components/ui/status-badge";
 import { TechnicianBookingActions } from "@/components/technicians/booking-actions";
-import type { Booking } from "@/types";
+import { Button } from "@/components/ui/button";
+import { ApiError } from "@/lib/api";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://fixitnow-server.onrender.com";
-
-async function getBooking(id: string): Promise<Booking | null> {
-  const cookieHeader = (await headers()).get("cookie") ?? "";
-  const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, {
-    headers: { cookie: cookieHeader },
-    cache: "no-store",
-  });
-  if (res.status === 404 || res.status === 401 || res.status === 403)
-    return null;
-  if (!res.ok) throw new Error("Failed to load booking");
-  const json = await res.json();
-  return json.data as Booking;
-}
-
-export default async function TechnicianBookingDetailPage({
+export default function TechnicianBookingDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  const booking = await getBooking(id);
+  const { id } = use(params);
+  const { data: booking, isLoading, error, refetch } = useBooking(id);
 
-  if (!booking) notFound();
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error) {
+    const status = error instanceof ApiError ? error.status : undefined;
+    const isNotFound = status === 404 || status === 403;
+
+    return (
+      <div className="mx-auto flex max-w-md flex-col items-center py-20 text-center">
+        <div
+          className={`flex h-14 w-14 items-center justify-center rounded-2xl ${isNotFound ? "bg-muted" : "bg-destructive/10"}`}
+        >
+          {isNotFound ? (
+            <FileSearch className="h-6 w-6 text-muted-foreground" />
+          ) : (
+            <AlertTriangle className="h-6 w-6 text-destructive" />
+          )}
+        </div>
+        <h1 className="mt-5 font-heading text-xl font-bold text-foreground">
+          {isNotFound ? "Booking not found" : "Something went wrong"}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {isNotFound
+            ? "This booking doesn't exist, or it isn't assigned to you."
+            : "We couldn't load this booking. Please try again."}
+        </p>
+        <div className="mt-6 flex gap-3">
+          {!isNotFound && <Button onClick={() => refetch()}>Try again</Button>}
+          <Link href="/dashboard/technician/bookings">
+            <Button variant={isNotFound ? "primary" : "outline"}>
+              Back to bookings
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!booking) return null;
 
   const price = booking.service ? parseFloat(booking.service.price) : 0;
 

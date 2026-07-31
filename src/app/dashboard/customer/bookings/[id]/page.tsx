@@ -63,7 +63,7 @@ export default function BookingDetailPage() {
         </p>
 
         <p className="mt-1 text-sm text-muted-foreground">
-          with {booking.technician?.user?.name}
+          with {booking.technician?.name}
         </p>
 
         <div className="mt-4 grid grid-cols-1 gap-3 border-t border-border pt-4 text-sm sm:grid-cols-2">

@@ -89,7 +89,7 @@ export default function AdminBookingsPage() {
                     {b.customer?.name}
                   </td>
                   <td className="whitespace-nowrap px-5 py-3 text-muted-foreground">
-                    {b.technician?.user?.name}
+                    {b.technician?.name}
                   </td>
                   <td className="whitespace-nowrap px-5 py-3 text-muted-foreground">
                     {new Date(b.bookingDate).toLocaleDateString("en-US", {

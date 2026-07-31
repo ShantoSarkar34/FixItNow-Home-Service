@@ -42,7 +42,7 @@ export default async function PaymentSuccessPage({ params }: { params: Promise<{
         {booking && (
           <div className="mt-8 w-full rounded-2xl border border-border bg-card p-5 text-left">
             <p className="font-heading text-sm font-bold text-foreground">{booking.service?.title}</p>
-            <p className="mt-1 text-xs text-muted-foreground">with {booking.technician?.user?.name}</p>
+            <p className="mt-1 text-xs text-muted-foreground">with {booking.technician?.name}</p>
             <div className="mt-4 flex flex-wrap gap-4 border-t border-border pt-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <Calendar className="h-3.5 w-3.5" />

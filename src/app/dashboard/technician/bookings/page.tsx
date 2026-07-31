@@ -5,9 +5,9 @@ import Link from "next/link";
 import { MapPin, Calendar } from "lucide-react";
 import { useBookings } from "@/hooks/use-bookings";
 import { BookingStatusBadge } from "@/components/ui/status-badge";
+import { TechnicianBookingActions } from "@/components/technicians/booking-actions";
 import { cn } from "@/lib/utils";
 import type { BookingStatus } from "@/types";
-import { TechnicianBookingActions } from "../../../../components/technicians/booking-actions";
 
 const TABS: { value: BookingStatus | "ALL"; label: string }[] = [
   { value: "ALL", label: "All" },
@@ -19,8 +19,11 @@ const TABS: { value: BookingStatus | "ALL"; label: string }[] = [
 ];
 
 export default function TechnicianBookingsPage() {
-  const [tab, setTab] = useState<BookingStatus | "ALL">("PENDING");
-  const { data: bookings, isLoading } = useBookings(tab);
+  const [tab, setTab] = useState<BookingStatus | "ALL">("ALL");
+  const { data: bookings, isLoading, isError } = useBookings(tab);
+
+  const activeLabel =
+    TABS.find((t) => t.value === tab)?.label.toLowerCase() ?? "";
 
   return (
     <div>
@@ -51,10 +54,20 @@ export default function TechnicianBookingsPage() {
           <p className="text-sm text-muted-foreground">Loading bookings…</p>
         )}
 
-        {!isLoading && bookings?.length === 0 && (
+        {isError && !isLoading && (
           <div className="rounded-2xl border border-dashed border-border p-12 text-center">
             <p className="text-sm text-muted-foreground">
-              No bookings in this category.
+              Couldn't load bookings right now. Please try again shortly.
+            </p>
+          </div>
+        )}
+
+        {!isLoading && !isError && bookings?.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-border p-12 text-center">
+            <p className="text-sm text-muted-foreground">
+              {tab === "ALL"
+                ? "No bookings yet."
+                : `No ${activeLabel} bookings.`}
             </p>
           </div>
         )}

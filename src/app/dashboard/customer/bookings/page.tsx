@@ -75,7 +75,7 @@ export default function CustomerBookingsPage() {
                 <p className="font-heading text-sm font-bold text-foreground hover:text-primary">
                   {b.service?.title}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">{b.technician?.user?.name}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{b.technician?.name}</p>
                 <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-3.5 w-3.5" />
