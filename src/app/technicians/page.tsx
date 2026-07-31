@@ -15,10 +15,9 @@ import type { TechnicianProfile } from "@/types";
 function TechniciansContent() {
   const searchParams = useSearchParams();
   const minRating = searchParams.get("minRating");
-  const queryString = searchParams.toString();
   const apiParams = new URLSearchParams(searchParams.toString());
   apiParams.delete("minRating");
-
+  const queryString = apiParams.toString();
 
   const {
     data: technicians,
@@ -32,12 +31,12 @@ function TechniciansContent() {
       ),
   });
 
-  const filteredTechnicians = minRating
-    ? technicians?.filter((t) => t.averageRating >= parseFloat(minRating))
-    : technicians;
-      // ...rest of the component unchanged, but render `filteredTechnicians`
-  // instead of `technicians` everywhere below (count text + grid map)
+  const minRatingValue = minRating ? parseFloat(minRating) : null;
 
+  const filteredTechnicians =
+    minRatingValue !== null
+      ? technicians?.filter((t) => Number(t.averageRating) >= minRatingValue)
+      : technicians;
 
   return (
     <>
@@ -53,7 +52,7 @@ function TechniciansContent() {
           <p className="mt-2 text-sm text-muted-foreground">
             {isLoading
               ? "Loading technicians…"
-              : `${technicians?.length ?? 0} technicians available`}
+              : `${filteredTechnicians?.length ?? 0} technicians available`}
           </p>
         </div>
 
@@ -77,7 +76,7 @@ function TechniciansContent() {
               </div>
             )}
 
-            {!isLoading && !isError && technicians?.length === 0 && (
+            {!isLoading && !isError && filteredTechnicians?.length === 0 && (
               <div className="flex flex-col items-center rounded-2xl border border-dashed border-border p-16 text-center">
                 <UserX className="h-8 w-8 text-muted-foreground" />
                 <p className="mt-3 text-sm font-medium text-foreground">
@@ -91,10 +90,10 @@ function TechniciansContent() {
 
             {!isLoading &&
               !isError &&
-              technicians &&
-              technicians.length > 0 && (
+              filteredTechnicians &&
+              filteredTechnicians.length > 0 && (
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                  {technicians.map((tech) => (
+                  {filteredTechnicians.map((tech) => (
                     <TechnicianCard key={tech.id} technician={tech} />
                   ))}
                 </div>
